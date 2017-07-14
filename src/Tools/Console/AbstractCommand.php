@@ -21,6 +21,25 @@ abstract class AbstractCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+    
+        $encodings = [
+            'UTF-8', 'ASCII', 'ISO-8859-2', 'Windows-1251', 'Windows-1252', 'Windows-1254',
+        ];
+        
+        foreach ($input->getArguments() as $name => $value) {
+            $encoding = mb_detect_encoding($value, $encodings);
+            
+            if (empty($encoding)) {
+                $this->writelnVVV('Unknown encoding of argument '.$name);
+                continue;
+            }
+            
+            $this->writelnVVV('Detected encoding of argument "'.$name.'" is '.$encoding);
+            if ($encoding !== 'UTF-8') {
+                $input->setArgument($name, mb_convert_encoding($value, 'UTF-8', $encoding));
+            }
+        }
+        
         $this->handleInput($input, $output);
     }
     
