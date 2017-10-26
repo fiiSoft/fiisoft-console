@@ -17,6 +17,12 @@ abstract class AbstractCommand extends Command
     /** @var int used to check if pid file exists once per second */
     private $lastCheck = 0;
     
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @return int|null null or 0 if everything went fine, or an error code
+     */
     final protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -40,13 +46,13 @@ abstract class AbstractCommand extends Command
             }
         }
         
-        $this->handleInput($input, $output);
+        return $this->handleInput($input, $output);
     }
     
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int|null null or 0 if everything went fine, or an error code
      */
     abstract protected function handleInput(InputInterface $input, OutputInterface $output);
     
@@ -103,9 +109,7 @@ abstract class AbstractCommand extends Command
             }
             $this->writelnVVV('Pid file open error, file not created');
         } else {
-            $this->writelnVVV('Directory for pid files does not exist and cannot be created ('
-                .$pidfilesPath.')'
-            );
+            $this->writelnVVV('Directory for pid files does not exist and cannot be created ('.$pidfilesPath.')');
         }
         
         return false;
