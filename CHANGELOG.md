@@ -2,6 +2,10 @@
 
 All important changes to `fiisoft-console` will be documented in this file
 
+## 1.3.0
+
+Methods addOptionRun and canContinueExecution added to AbstractCommand.
+
 ## 1.2.0
 
 Method handleInput is able to return exit code.

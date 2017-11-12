@@ -4,6 +4,7 @@ namespace FiiSoft\Tools\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractCommand extends Command
@@ -55,6 +56,33 @@ abstract class AbstractCommand extends Command
      * @return int|null null or 0 if everything went fine, or an error code
      */
     abstract protected function handleInput(InputInterface $input, OutputInterface $output);
+    
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @return bool
+     */
+    protected function canContinueExecution(InputInterface $input, OutputInterface $output)
+    {
+        if ($input->hasOption('run') && !$input->getOption('run')) {
+            $output->writeln('To start command, run it with option --run (-r)');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * @param string|null $description
+     * @return void
+     */
+    final protected function addOptionRun($description = null)
+    {
+        if (!$this->getDefinition()->hasOption('run')) {
+            $this->addOption('run', 'r', InputOption::VALUE_NONE, $description ?: 'Run command');
+        }
+    }
     
     /**
      * Create pid file (ind default directory).
